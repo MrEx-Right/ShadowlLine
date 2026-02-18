@@ -16,5 +16,3 @@ First public release of **ShadowLine**, a modern, stealthy, and modular C2 frame
 - **Command:** Remote Shell execution.
 - **File I/O:** Upload and Download capabilities.
 - **Surveillance:** Screenshot capture.
-- **Stress Test:** HTTP Flood module.
-- **Cleanup:** Self-destruct (`uninstall`) command.
