@@ -47,7 +47,6 @@ ShadowLine comes with built-in post-exploitation modules:
 - **⬇️ Infiltration**: Download payloads or tools from the internet to the target.
 - **⬆️ Exfiltration**: Steal sensitive files and upload them to the C2 server.
 - **📸 Spyware**: Capture screenshots of the victim's desktop instantly.
-- **🌊 Flood Attack**: Perform HTTP Flood (Stress Test) against specified targets.
 
 ## 📦 Installation
 ShadowLine requires Go 1.21+ and an Ngrok account.
