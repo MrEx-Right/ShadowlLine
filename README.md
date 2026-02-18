@@ -3,6 +3,7 @@ ShadowLine: A lightweight post-exploitation tool and C2 infrastructure designed 
 # 🕵️‍♂️ ShadowLine - Next-Gen C2 Framework
 
 ![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)
+![License](https://img.shields.io/badge/License-GPLv3-blue)
 ![Platform](https://img.shields.io/badge/Platform-Win%20%7C%20Linux%20%7C%20Mac-gray)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 ![Type](https://img.shields.io/badge/Type-Red%20Team%20Ops-red)
