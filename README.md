@@ -1,11 +1,10 @@
-# ShadowlLine
+# ShadowLine
 ShadowLine: A lightweight post-exploitation tool and C2 infrastructure designed for stealth, persistence, and modern evasion techniques.
 # 🕵️‍♂️ ShadowLine - Next-Gen C2 Framework
 
 ![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)
 ![License](https://img.shields.io/badge/License-GPLv3-blue)
 ![Platform](https://img.shields.io/badge/Platform-Win%20%7C%20Linux%20%7C%20Mac-gray)
-![License](https://img.shields.io/badge/License-MIT-blue)
 ![Type](https://img.shields.io/badge/Type-Red%20Team%20Ops-red)
 
 **ShadowLine** is a stealthy, modular, and cross-platform Command & Control (C2) framework written in **Go**. Designed for Red Team engagements and adversary emulation, it focuses on resilience and evasion.
@@ -69,7 +68,7 @@ cp config.json.example config.json
 cd server
 go run main.go
 ```
-🛠️ Building Agents
+### 🛠️ Building Agents
 Use the interactive builder to generate payloads for any OS.
 ```bash
 cd builder
