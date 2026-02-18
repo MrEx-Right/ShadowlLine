@@ -54,7 +54,7 @@ ShadowLine requires Go 1.21+ and an Ngrok account.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Mrex/ShadowLine.git
+git clone https://github.com/MrEx-Right/ShadowlLine.git
 cd ShadowLine
 
 # 2. Initialize the module
